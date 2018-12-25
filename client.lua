@@ -11,15 +11,14 @@ local Keys = {
 }
 
 local HasAlreadyEnteredMarker = false
-local LastPad                 = nil
-local LastAction              = nil
-local LastPadData             = nil
-local CurrentAction           = nil
-local CurrentActionMsg        = ''
-local CurrentActionData       = nil
-local ClickedInsideMarker     = false
+local LastPad = nil
+local LastAction = nil
+local LastPadData = nil
+local CurrentAction = nil
+local CurrentActionMsg = ''
+local CurrentActionData = nil
 
-ESX                           = nil
+ESX = nil
 
 Citizen.CreateThread(function()
 	while ESX == nil do
@@ -38,22 +37,20 @@ end)
 RegisterNetEvent('esx_teleportpads:hasExitedMarker')
 AddEventHandler('esx_teleportpads:hasExitedMarker', function()
 	ESX.UI.Menu.CloseAll()
-	
+
 	CurrentAction = nil
-	ClickedInsideMarker = false
 end)
 
 -- Draw marker
 Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(0)
-		
 		local playerPed = PlayerPedId()
 		local coords = GetEntityCoords(playerPed)
 
-		for pad, padData in pairs(Config.Pads) do
-			if GetDistanceBetweenCoords(coords, padData.Marker.x, padData.Marker.y, padData.Marker.z,  true) < Config.DrawDistance then
-				DrawMarker(Config.Marker.Type, padData.Marker.x, padData.Marker.y, padData.Marker.z, 0.0, 0.0, 0.0, 0, 0.0, 0.0, Config.Marker.x, Config.Marker.y, Config.Marker.z, Config.Marker.r, Config.Marker.g, Config.Marker.b, 100, false, true, 2, false, false, false, false)
+		for pad, padData in ipairs(Config.Pads) do
+			if GetDistanceBetweenCoords(coords, padData.Marker, true) < Config.DrawDistance then
+				DrawMarker(padData.MarkerSettings.type, padData.Marker, 0.0, 0.0, 0.0, 0, 0.0, 0.0, padData.MarkerSettings.x, padData.MarkerSettings.y, padData.MarkerSettings.z, padData.MarkerSettings.r, padData.MarkerSettings.g, padData.MarkerSettings.b, padData.MarkerSettings.a, false, true, 2, false, false, false, false)
 			end
 		end
 	end
@@ -63,12 +60,11 @@ Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(0)
 		
-		local playerPed      = PlayerPedId()
-		local coords         = GetEntityCoords(playerPed)
-		local isInMarker, currentPad, currentAction, currentPadData = false, nil, nil, nil
+		local playerPed = PlayerPedId()
+		local coords, isInMarker, currentPad, currentAction, currentPadData = GetEntityCoords(playerPed), false, nil, nil, nil
 
-		for pad,padData in pairs(Config.Pads) do
-			if GetDistanceBetweenCoords(coords, padData.Marker.x, padData.Marker.y, padData.Marker.z, true) < (Config.Marker.x * 1.5) then
+		for pad, padData in ipairs(Config.Pads) do
+			if GetDistanceBetweenCoords(coords, padData.Marker, true) < padData.MarkerSettings.x then
 				isInMarker, currentPad, currentAction, currentPadData = true, pad, 'pad.' .. string.lower(pad), padData
 			end
 		end
@@ -105,13 +101,9 @@ Citizen.CreateThread(function()
 			ESX.ShowHelpNotification(CurrentActionMsg)
 
 			if IsControlJustReleased(0, Keys['E']) then
-				if ClickedInsideMarker == false then
-					ClickedInsideMarker = true
-
-					ESX.Game.Teleport(PlayerPedId(), CurrentActionData.padData.TeleportPoint, function()
-						SetEntityHeading(PlayerPedId(), CurrentActionData.padData.TeleportPoint.h)
-					end)
-				end
+				ESX.Game.Teleport(PlayerPedId(), CurrentActionData.padData.TeleportPoint.coords, function()
+					SetEntityHeading(PlayerPedId(), CurrentActionData.padData.TeleportPoint.h)
+				end)
 			end
 		else
 			Citizen.Wait(500)
