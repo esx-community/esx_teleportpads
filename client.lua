@@ -52,6 +52,7 @@ Citizen.CreateThread(function()
 		for pad, padData in ipairs(Config.Pads) do
 			if GetDistanceBetweenCoords(coords, padData.Marker, true) < Config.DrawDistance then
 				DrawMarker(padData.MarkerSettings.type, padData.Marker, 0.0, 0.0, 0.0, 0, 0.0, 0.0, padData.MarkerSettings.x, padData.MarkerSettings.y, padData.MarkerSettings.z, padData.MarkerSettings.r, padData.MarkerSettings.g, padData.MarkerSettings.b, padData.MarkerSettings.a, false, true, 2, false, false, false, false)
+				canSleep = false
 			end
 		end
 
