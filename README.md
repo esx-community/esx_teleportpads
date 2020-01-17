@@ -28,7 +28,7 @@ start esx_teleportpads
 ### License
 esx_teleportpads - teleport pads for ESX
 
-Copyright (C) 2018 ESX-PUBLIC
+Copyright (C) 2020 ESX-PUBLIC
 
 This program Is free software: you can redistribute it And/Or modify it under the terms Of the GNU General Public License As published by the Free Software Foundation, either version 3 Of the License, Or (at your option) any later version.
 
